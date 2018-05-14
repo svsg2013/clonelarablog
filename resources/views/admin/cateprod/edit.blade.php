@@ -14,7 +14,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="p-20">
-                            {!! Form::open(['route' => ['category.update',$catePaId->cateParen_id],'method'=>'put','class'=>'form-horizontal','role'=>'form','enctype'=>'multipart/form-data']) !!}
+                            {!! Form::open(['route' => ['cateprod.update',$catePaId->cateParen_id],'method'=>'put','class'=>'form-horizontal','role'=>'form','enctype'=>'multipart/form-data']) !!}
                             <div class="form-group">
                                 {!! Form::label('title','Title',['class'=>'col-md-2 control-label']) !!}
                                 <div class="col-md-10">

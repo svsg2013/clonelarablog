@@ -5,7 +5,9 @@
  * Date: 5/5/2018
  * Time: 10:01 AM
  */
+
 namespace App\Repositories\CateProd;
+
 use App\Repositories\EloquentRepository;
 use App\CateProd;
 use App\ChildProd;
@@ -22,68 +24,69 @@ class CateProdEloquentRepository extends EloquentRepository implements CateProdR
         return \App\CateProd::class;
     }
 
-    public function getDataMenu(){
-        $cate= DB::table('cate_prods')
-            ->leftjoin('child_prods','cate_prods.id','=','child_prods.cateParen_id')
-            ->select('name','lvl','alias','metaName','description','weight','child_prods.cateParen_id')
+    public function getDataMenu()
+    {
+        $cate = DB::table('cate_prods')
+            ->leftjoin('child_prods', 'cate_prods.id', '=', 'child_prods.cateParen_id')
+            ->select('name', 'lvl', 'alias', 'metaName', 'description', 'weight', 'child_prods.cateParen_id')
             ->get();
         return $cate;
     }
 
-    public function getCreateAndEdit($inputFile, $id=0){
-        if($id==0){
-            $cateData= new CateProd();
-            $cateData->name= $inputFile['txtName'];
-            $cateData->alias= changeTitle($inputFile['txtName']);
+    public function getCreateAndEdit($inputFile, $id = 0)
+    {
+        if ($id == 0) {
+            $cateData = new CateProd();
+            $cateData->name = $inputFile['txtName'];
+            $cateData->alias = changeTitle($inputFile['txtName']);
             // khuc !empty -> không để trống thì thực hiện tức là có nhập vào text form
-            if(!empty($inputFile['txtMeta'])){
-                $cateData->metaName= $inputFile['txtMeta'];
+            if (!empty($inputFile['txtMeta'])) {
+                $cateData->metaName = $inputFile['txtMeta'];
 
-            }else{
-                $cateData->metaName= $inputFile['txtName'];
+            } else {
+                $cateData->metaName = $inputFile['txtName'];
             }
-            $cateData->description= $inputFile['txtDescription'];
+            $cateData->description = $inputFile['txtDescription'];
             $cateData->save();
-            $cateChildData= new ChildProd();
-            $cateChildData->cateParen_id= $cateData->id;
-            $cateChildData->lvl= $inputFile['slMenu'];
+            $cateChildData = new ChildProd();
+            $cateChildData->cateParen_id = $cateData->id;
+            $cateChildData->lvl = $inputFile['slMenu'];
             $cateChildData->save();
-            return redirect()->route('cateprod.index')->with('thongbao','Danh mục tạo thành công');
-        }else{
-            $cateData= CateProd::find($id);
-            $cateData->name= $inputFile['txtName'];
-            $cateData->alias= changeTitle($inputFile['txtName']);
-            if(!empty($inputFile['txtMeta'])){
-                $cateData->metaName= $inputFile['txtMeta'];
+            return redirect()->route('cateprod.index')->with('thongbao', 'Danh mục tạo thành công');
+        } else {
+            $cateData = CateProd::find($id);
+            $cateData->name = $inputFile['txtName'];
+            $cateData->alias = changeTitle($inputFile['txtName']);
+            if (!empty($inputFile['txtMeta'])) {
+                $cateData->metaName = $inputFile['txtMeta'];
 
-            }else{
-                $cateData->metaName= $inputFile['txtName'];
+            } else {
+                $cateData->metaName = $inputFile['txtName'];
             }
-            $cateData->description= $inputFile['txtDescription'];
+            $cateData->description = $inputFile['txtDescription'];
             $cateData->save();
-            $getIDParent= DB::table('cate_prods')
-                ->leftjoin('child_prods','categories.id','=','child_prods.cateParen_id')
+            $getIDParent = DB::table('cate_prods')
+                ->leftjoin('child_prods', 'cate_prods.id', '=', 'child_prods.cateParen_id')
                 ->select('child_prods.id')
-                ->where('child_prods.cateParen_id','=',$id)
+                ->where('child_prods.cateParen_id', '=', $id)
                 ->get()->first();
-            $cateChildData= ChildCate::find($getIDParent->id);
-            $cateChildData->lvl= $inputFile['slMenu'];
+            $cateChildData = ChildProd::find($getIDParent->id);
+            $cateChildData->lvl = $inputFile['slMenu'];
             $cateChildData->save();
-            return redirect()->route('cateprod.index')->with('thongbao','Danh mục thay đổi thành công');
+            return redirect()->route('cateprod.index')->with('thongbao', 'Danh mục thay đổi thành công');
         }
 
     }
 
     public function getDelete($id)
     {
-        $categet= ChildCate::where('lvl',$id)->count();
-        if($categet==0){
-            $getid= Category::find($id);
+        $categet = ChildProd::where('lvl', $id)->count();
+        if ($categet == 0) {
+            $getid = CateProd::find($id);
             $getid->delete();
-            return redirect()->route('category.index')->with('thongbao','Xóa thành công');
-        }else{
-            return redirect()->route('category.index')->with('thongbaoloi','Đây là thư mục cha không thể xóa được');
+            return redirect()->route('cateprod.index')->with('thongbao', 'Xóa thành công');
+        } else {
+            return redirect()->route('cateprod.index')->with('thongbaoloi', 'Đây là thư mục cha không thể xóa được');
         }
     }
-
 }

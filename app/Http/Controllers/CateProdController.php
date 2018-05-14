@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\RequestCateProd;
 use App\Repositories\CateProd\CateProdRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
@@ -43,9 +44,9 @@ class CateProdController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RequestCateProd $requestCateProd)
     {
-        $cateProd= $this->_cateprod->getCreateAndEdit($request->all());
+        $cateProd= $this->_cateprod->getCreateAndEdit($requestCateProd->all());
         if ($cateProd){
             return $cateProd;
         }
@@ -70,7 +71,15 @@ class CateProdController extends Controller
      */
     public function edit($id)
     {
-        //
+        $cateData = $this->_cateprod->getDataMenu();
+        $cateParent = DB::table('cate_prods')
+            ->leftjoin('child_prods', 'cate_prods.id', '=', 'child_prods.cateParen_id')
+            ->select('name', 'metaName', 'description', 'lvl', 'child_prods.cateParen_id')
+            ->where('child_prods.cateParen_id', '=', $id)
+            //first get value object
+            ->get()->first();
+
+        return view('admin.cateprod.edit')->with(['datas' => $cateData, 'catePaId' => $cateParent]);
     }
 
     /**
@@ -82,7 +91,8 @@ class CateProdController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $cateProd= $this->_cateprod->getCreateAndEdit($request->all(),$id);
+        return $cateProd;
     }
 
     /**
@@ -93,6 +103,7 @@ class CateProdController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $cateProd= $this->_cateprod->getDelete($id);
+        return $cateProd;
     }
 }

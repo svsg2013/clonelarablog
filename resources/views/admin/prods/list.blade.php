@@ -11,48 +11,48 @@
                 <table id="datatable-fixed-header" class="table table-striped table-bordered">
                     <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Alias</th>
-                        <th>Meta Title</th>
-                        <th>Category</th>
+                        <th>Title</th>
+                        <th>Hot</th>
+                        <th>Feature</th>
+                        <th>Active</th>
                         <th>Weight</th>
                         <th>Option</th>
                     </tr>
                     </thead>
+
+
                     <tbody>
-                    @foreach($cateProds as $cate)
-                        <tr>
-                            <td>{{$cate->name}}</td>
-                            <td>{{$cate->alias}}</td>
-                            <td>{{$cate->metaName}}</td>
-                            <td>
-                                @if($cate->lvl==0)
-                                    {!!'<span style="color: red;font-weight: 600;">Thư mục cha</span>' !!}
+                    @foreach($getData as $get)
+                    <tr>
+                        <td>{{$get->title}}</td>
+                        <td>
+                            @if(($get->hot) == 1)
+                                {!! "<p style='color:#2b579a'>On<p>"!!}
                                 @else
-                                    @php
-                                        $catePa = DB::table('cate_prods')
-                                        ->leftjoin('child_prods', 'cate_prods.id', '=', 'child_prods.cateParen_id')
-                                        ->select('name')->where('cate_prods.id', '=', $cate->lvl)
-                                        ->get()->first();
-                                    echo "<span style='color: #0a6aa1;font-weight: 600;'>" . $catePa->name . "</span>";
-                                    @endphp
-
+                                    {!! "<p style='color:#d8d8d8'>Off<p>" !!}
                                 @endif
-                            </td>
-                            <td style="text-align: center">{{$cate->weight}}</td>
-                            <td>
-                                <a href="{{route('cateprod.edit',$cate->cateParen_id)}}">
-                                    <button type="button" class="btn btn-icon waves-effect waves-light btn-warning"><i
-                                                class="fa fa-wrench"></i></button>
-                                </a>
-                                <a href="{{route('cateprod.delete',$cate->cateParen_id)}}">
-                                    <button type="button" class="btn btn-icon waves-effect waves-light btn-danger"><i
-                                                class="fa fa-remove"></i></button>
-                                </a>
-
-                            </td>
-                        </tr>
-                    @endforeach
+                        </td>
+                        <td>
+                            @if(($get->feature) == 1)
+                                {!! "<p style='color:#2b579a'>On<p>"!!}
+                            @else
+                                {!! "<p style='color:#d8d8d8'>Off<p>" !!}
+                            @endif
+                        </td>
+                        <td>
+                            @if(($get->active) == 1)
+                                {!! "<p style='color:#2b579a'>On<p>"!!}
+                            @else
+                                {!! "<p style='color:#d8d8d8'>Off<p>" !!}
+                            @endif
+                        </td>
+                        <td>{{$get->sort}}</td>
+                        <td>
+                            <a href="{{route('news.edit',$get->id)}}"><button type="button" class="btn btn-icon waves-effect waves-light btn-warning">  <i class="fa fa-wrench"></i> </button></a>
+                            <a href="{{route('news.delete',$get->id)}}"><button type="button" class="btn btn-icon waves-effect waves-light btn-danger"> <i class="fa fa-remove"></i> </button></a>
+                        </td>
+                    </tr>
+                     @endforeach
                     </tbody>
                 </table>
             </div>
